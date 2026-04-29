@@ -1,0 +1,7 @@
+1.打开终端。
+2.在终端里面运行   python scripts\update_codeforces_stats.py
+3.依次输入  
+cd D:\github\Algorithm
+git add assets/codeforces-stats.svg
+git commit -m "Update Codeforces stats"
+git push
