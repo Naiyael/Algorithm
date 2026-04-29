@@ -110,10 +110,10 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
 
     rating_points = []
     if ratings:
-        chart_x = 72
-        chart_y = 126
-        chart_w = 708
-        chart_h = 100
+        chart_x = 86
+        chart_y = 242
+        chart_w = 770
+        chart_h = 78
         values = [item["newRating"] for item in ratings]
         lo = min(values + [1200])
         hi = max(values + [max(1500, int(max_rating) if isinstance(max_rating, int) else 1500)])
@@ -125,18 +125,18 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
             rating_points.append(f"{x:.1f},{y:.1f}")
         latest_contest = esc(ratings[-1].get("contestName", "Latest contest"))
     else:
-        chart_x = 72
-        chart_y = 126
-        chart_w = 708
-        chart_h = 100
+        chart_x = 86
+        chart_y = 242
+        chart_w = 770
+        chart_h = 78
         lo = 0
         hi = 0
         latest_contest = "No rated contest yet"
 
-    cell = 12
+    cell = 11
     gap = 3
-    heat_x = 72
-    heat_y = 292
+    heat_x = 92
+    heat_y = 432
     weekday_labels = [(1, "Mon"), (3, "Wed"), (5, "Fri")]
 
     rects = []
@@ -156,12 +156,12 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
     month_labels = []
     for week, label in month_label_positions(start, weeks):
         x = heat_x + week * (cell + gap)
-        month_labels.append(f'<text x="{x}" y="278" class="muted small">{label}</text>')
+        month_labels.append(f'<text x="{x}" y="418" class="muted small">{label}</text>')
 
     weekday_text = []
     for weekday, label in weekday_labels:
         y = heat_y + weekday * (cell + gap) + 10
-        weekday_text.append(f'<text x="24" y="{y}" class="muted small">{label}</text>')
+        weekday_text.append(f'<text x="48" y="{y}" class="muted small">{label}</text>')
 
     rating_polyline = ""
     if rating_points:
@@ -175,53 +175,70 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
             + "".join(point_dots)
         )
 
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="860" height="430" viewBox="0 0 860 430" role="img" aria-label="Codeforces statistics for {esc(HANDLE)}">
+    cards = [
+        ("Current rating", rating, True),
+        ("Max rating", max_rating, False),
+        ("Rank", rank, True),
+        ("Max rank", max_rank, False),
+        ("Solved", solved_total, False),
+        ("Active days", active_days, False),
+    ]
+    metric_cards = []
+    for index, (label, value, colored) in enumerate(cards):
+        x = 36 + index * 148
+        value_class = "metric-value rank" if colored else "metric-value"
+        metric_cards.append(
+            f'<rect x="{x}" y="96" width="132" height="74" rx="8" class="metric-card"/>'
+            f'<text x="{x + 16}" y="122" class="metric-label">{esc(label)}</text>'
+            f'<text x="{x + 16}" y="153" class="{value_class}">{esc(value)}</text>'
+        )
+
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-label="Codeforces statistics for {esc(HANDLE)}">
 <style>
   .bg {{ fill: #ffffff; }}
-  .panel {{ fill: #f6f8fa; stroke: #d0d7de; }}
-  .title {{ font: 700 24px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: #24292f; }}
-  .label {{ font: 600 13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: #57606a; }}
-  .value {{ font: 700 22px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: #24292f; }}
+  .shell {{ fill: #ffffff; stroke: #d0d7de; }}
+  .soft {{ fill: #f6f8fa; stroke: #d8dee4; }}
+  .metric-card {{ fill: #ffffff; stroke: #d8dee4; }}
+  .title {{ font: 700 26px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: #24292f; }}
+  .subtitle {{ font: 13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: #6e7781; }}
+  .section-title {{ font: 700 15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: #24292f; }}
+  .metric-label {{ font: 600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: #57606a; }}
+  .metric-value {{ font: 800 24px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: #24292f; }}
   .muted {{ font: 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: #6e7781; }}
   .small {{ font-size: 11px; }}
   .rank {{ fill: {accent}; }}
   .grid {{ stroke: #d8dee4; stroke-width: 1; }}
+  .badge-bg {{ fill: {accent}; opacity: 0.14; }}
+  .badge-text {{ font: 700 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: {accent}; }}
 </style>
-<rect class="bg" width="860" height="430" rx="8"/>
-<rect class="panel" x="16" y="16" width="828" height="398" rx="8"/>
-<text x="36" y="54" class="title">Codeforces / {esc(HANDLE)}</text>
-<text x="36" y="78" class="muted">Updated {esc(last_update)}</text>
-<text x="36" y="112" class="label">Current rating</text>
-<text x="36" y="142" class="value rank">{esc(rating)}</text>
-<text x="180" y="112" class="label">Max rating</text>
-<text x="180" y="142" class="value">{esc(max_rating)}</text>
-<text x="314" y="112" class="label">Rank</text>
-<text x="314" y="142" class="value rank">{esc(rank)}</text>
-<text x="454" y="112" class="label">Max rank</text>
-<text x="454" y="142" class="value">{esc(max_rank)}</text>
-<text x="620" y="112" class="label">Solved</text>
-<text x="620" y="142" class="value">{solved_total}</text>
-<text x="734" y="112" class="label">Active days</text>
-<text x="734" y="142" class="value">{active_days}</text>
+<rect class="bg" width="960" height="580" rx="12"/>
+<rect class="shell" x="18" y="18" width="924" height="544" rx="12"/>
+<text x="36" y="58" class="title">Codeforces</text>
+<text x="36" y="82" class="subtitle">@{esc(HANDLE)} · updated {esc(last_update)}</text>
+<rect x="805" y="38" width="96" height="30" rx="15" class="badge-bg"/>
+<text x="828" y="58" class="badge-text">{esc(rank)}</text>
+{"".join(metric_cards)}
+<rect class="soft" x="36" y="192" width="888" height="158" rx="10"/>
+<text x="58" y="222" class="section-title">Contest rating trend</text>
+<text x="230" y="222" class="muted">{latest_contest}</text>
 <line x1="{chart_x}" y1="{chart_y + chart_h}" x2="{chart_x + chart_w}" y2="{chart_y + chart_h}" class="grid"/>
 <line x1="{chart_x}" y1="{chart_y}" x2="{chart_x}" y2="{chart_y + chart_h}" class="grid"/>
-<text x="36" y="204" class="label">Contest rating trend</text>
-<text x="36" y="224" class="muted">{latest_contest}</text>
-<text x="{chart_x + chart_w + 12}" y="{chart_y + 6}" class="muted">{hi}</text>
+<text x="{chart_x + chart_w + 12}" y="{chart_y + 5}" class="muted">{hi}</text>
 <text x="{chart_x + chart_w + 12}" y="{chart_y + chart_h}" class="muted">{lo}</text>
 {rating_polyline}
-<text x="36" y="258" class="label">Daily accepted submissions</text>
-<text x="232" y="258" class="muted">{total_ac} accepted submissions in visible history</text>
+<rect class="soft" x="36" y="370" width="888" height="166" rx="10"/>
+<text x="58" y="398" class="section-title">Daily accepted submissions</text>
+<text x="260" y="398" class="muted">{total_ac} accepted submissions in visible history</text>
 {"".join(month_labels)}
 {"".join(weekday_text)}
 {"".join(rects)}
-<rect x="698" y="374" width="12" height="12" rx="2" fill="#ebedf0"/>
-<rect x="718" y="374" width="12" height="12" rx="2" fill="#9be9a8"/>
-<rect x="738" y="374" width="12" height="12" rx="2" fill="#40c463"/>
-<rect x="758" y="374" width="12" height="12" rx="2" fill="#30a14e"/>
-<rect x="778" y="374" width="12" height="12" rx="2" fill="#216e39"/>
-<text x="634" y="384" class="muted small">Less</text>
-<text x="798" y="384" class="muted small">More</text>
+<text x="716" y="398" class="muted small">Less</text>
+<rect x="754" y="388" width="11" height="11" rx="2" fill="#ebedf0"/>
+<rect x="772" y="388" width="11" height="11" rx="2" fill="#9be9a8"/>
+<rect x="790" y="388" width="11" height="11" rx="2" fill="#40c463"/>
+<rect x="808" y="388" width="11" height="11" rx="2" fill="#30a14e"/>
+<rect x="826" y="388" width="11" height="11" rx="2" fill="#216e39"/>
+<text x="848" y="398" class="muted small">More</text>
 <!-- Avatar source: {esc(avatar)} -->
 </svg>
 """
@@ -238,4 +255,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
