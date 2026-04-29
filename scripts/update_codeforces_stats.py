@@ -139,6 +139,7 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
     heat_y = 432
     weekday_labels = [(1, "Mon"), (3, "Wed"), (5, "Fri")]
 
+    rects = []
     snake_targets: list[tuple[int, dt.date, float, float]] = []
     for week in range(weeks):
         for weekday in range(7):
@@ -150,6 +151,20 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
             y = heat_y + weekday * (cell + gap)
             if count > 0:
                 snake_targets.append((count, day, x + cell / 2, y + cell / 2))
+            rects.append(
+                f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" '
+                f'fill="{heat_color(count)}"><title>{day}: {count} accepted submissions</title></rect>'
+            )
+
+    month_labels = []
+    for week, label in month_label_positions(start, weeks):
+        x = heat_x + week * (cell + gap)
+        month_labels.append(f'<text x="{x}" y="418" class="muted small">{label}</text>')
+
+    weekday_text = []
+    for weekday, label in weekday_labels:
+        y = heat_y + weekday * (cell + gap) + 10
+        weekday_text.append(f'<text x="48" y="{y}" class="muted small">{label}</text>')
 
     rating_polyline = ""
     if rating_points:
@@ -243,7 +258,17 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
 <rect class="soft" x="36" y="370" width="888" height="166" rx="10"/>
 <text x="58" y="398" class="section-title">Daily accepted submissions</text>
 <text x="260" y="398" class="muted">{total_ac} accepted submissions in visible history</text>
+{"".join(month_labels)}
+{"".join(weekday_text)}
+{"".join(rects)}
 {snake_overlay}
+<text x="716" y="398" class="muted small">Less</text>
+<rect x="754" y="388" width="11" height="11" rx="2" fill="#ebedf0"/>
+<rect x="772" y="388" width="11" height="11" rx="2" fill="#9be9a8"/>
+<rect x="790" y="388" width="11" height="11" rx="2" fill="#40c463"/>
+<rect x="808" y="388" width="11" height="11" rx="2" fill="#30a14e"/>
+<rect x="826" y="388" width="11" height="11" rx="2" fill="#216e39"/>
+<text x="848" y="398" class="muted small">More</text>
 <!-- Avatar source: {esc(avatar)} -->
 </svg>
 """
