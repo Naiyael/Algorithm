@@ -185,27 +185,8 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
             f"{'M' if index == 0 else 'L'} {x:.1f} {y:.1f}"
             for index, (_, _, x, y) in enumerate(snake_targets)
         )
-        duration = max(34, min(58, len(snake_targets) * 1.2))
-        body_dots = []
-        visible_targets = snake_targets[:36]
-        total_steps = max(1, len(snake_targets) - 1)
-        for index, (count, day, x, y) in enumerate(visible_targets):
-            appear = min(0.9, index / total_steps)
-            pop = min(0.94, appear + 0.025)
-            key_times = f"0;{appear:.3f};{pop:.3f};0.965;1"
-            body_dots.append(
-                f'<circle cx="{x:.1f}" cy="{y:.1f}" r="4.4" class="snake-body">'
-                f'<title>{day}: {count} accepted submissions</title>'
-                f'<animate attributeName="opacity" values="0;0;0.82;0.82;0" '
-                f'keyTimes="{key_times}" dur="{duration:.1f}s" repeatCount="indefinite"/>'
-                f'<animate attributeName="r" values="2;2;4.4;4.4;2" '
-                f'keyTimes="{key_times}" dur="{duration:.1f}s" repeatCount="indefinite"/>'
-                f'</circle>'
-            )
+        duration = max(55, min(90, len(snake_targets) * 1.9))
         snake_overlay = f"""
-<g class="snake-growth">
-  {"".join(body_dots)}
-</g>
 <g class="snake-head">
   <animateMotion dur="{duration:.1f}s" repeatCount="indefinite" rotate="auto" path="{route}"/>
   <ellipse cx="0" cy="0" rx="8.5" ry="7" class="snake-face"/>
@@ -253,8 +234,6 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
   .grid {{ stroke: #d8dee4; stroke-width: 1; }}
   .badge-bg {{ fill: {accent}; opacity: 0.14; }}
   .badge-text {{ font: 700 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: {accent}; }}
-  .snake-growth {{ pointer-events: none; }}
-  .snake-body {{ fill: #1f883d; stroke: #ffffff; stroke-width: 1.5; opacity: 0; }}
   .snake-face {{ fill: #1f883d; stroke: #ffffff; stroke-width: 2; filter: drop-shadow(0 1px 2px rgba(31,136,61,0.22)); }}
   .snake-eye {{ fill: #ffffff; }}
   .snake-shine {{ fill: #1f883d; opacity: 0.85; }}
