@@ -187,16 +187,31 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
         )
         duration = max(14, min(28, len(snake_targets) * 0.55))
         snake_overlay = f"""
-<path d="{route}" class="snake-route"/>
-<path d="{route}" class="snake-track">
-  <animate attributeName="stroke-dashoffset" from="120" to="0" dur="{duration:.1f}s" repeatCount="indefinite"/>
-</path>
+<g class="snake-segment segment-4">
+  <animateMotion dur="{duration:.1f}s" begin="-1.8s" repeatCount="indefinite" path="{route}"/>
+  <circle cx="0" cy="0" r="4.5"/>
+</g>
+<g class="snake-segment segment-3">
+  <animateMotion dur="{duration:.1f}s" begin="-1.35s" repeatCount="indefinite" path="{route}"/>
+  <circle cx="0" cy="0" r="5"/>
+</g>
+<g class="snake-segment segment-2">
+  <animateMotion dur="{duration:.1f}s" begin="-0.9s" repeatCount="indefinite" path="{route}"/>
+  <circle cx="0" cy="0" r="5.5"/>
+</g>
+<g class="snake-segment segment-1">
+  <animateMotion dur="{duration:.1f}s" begin="-0.45s" repeatCount="indefinite" path="{route}"/>
+  <circle cx="0" cy="0" r="6"/>
+</g>
 <g class="snake-head">
   <animateMotion dur="{duration:.1f}s" repeatCount="indefinite" rotate="auto" path="{route}"/>
-  <circle cx="0" cy="0" r="7" class="snake-face"/>
-  <circle cx="-2.4" cy="-2.2" r="1.2" class="snake-eye"/>
-  <circle cx="2.4" cy="-2.2" r="1.2" class="snake-eye"/>
+  <ellipse cx="0" cy="0" rx="8.5" ry="7" class="snake-face"/>
+  <circle cx="-2.8" cy="-2.2" r="1.4" class="snake-eye"/>
+  <circle cx="2.8" cy="-2.2" r="1.4" class="snake-eye"/>
+  <circle cx="-3.2" cy="-2.5" r="0.45" class="snake-shine"/>
+  <circle cx="2.4" cy="-2.5" r="0.45" class="snake-shine"/>
   <path d="M -3 2 Q 0 4 3 2" class="snake-smile"/>
+  <path d="M 8 0 L 12 -2 M 8 0 L 12 2" class="snake-tongue"/>
 </g>
 """
 
@@ -235,11 +250,16 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
   .grid {{ stroke: #d8dee4; stroke-width: 1; }}
   .badge-bg {{ fill: {accent}; opacity: 0.14; }}
   .badge-text {{ font: 700 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: {accent}; }}
-  .snake-route {{ fill: none; stroke: #1f883d; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.14; }}
-  .snake-track {{ fill: none; stroke: #1f883d; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 10 14; opacity: 0.28; }}
-  .snake-face {{ fill: #1f883d; stroke: #ffffff; stroke-width: 2; }}
+  .snake-segment circle {{ fill: #1f883d; stroke: #ffffff; stroke-width: 1.5; }}
+  .segment-1 {{ opacity: 0.72; }}
+  .segment-2 {{ opacity: 0.52; }}
+  .segment-3 {{ opacity: 0.34; }}
+  .segment-4 {{ opacity: 0.2; }}
+  .snake-face {{ fill: #1f883d; stroke: #ffffff; stroke-width: 2; filter: drop-shadow(0 1px 2px rgba(31,136,61,0.22)); }}
   .snake-eye {{ fill: #ffffff; }}
+  .snake-shine {{ fill: #1f883d; opacity: 0.85; }}
   .snake-smile {{ fill: none; stroke: #ffffff; stroke-width: 1.2; stroke-linecap: round; }}
+  .snake-tongue {{ fill: none; stroke: #f85149; stroke-width: 1.2; stroke-linecap: round; }}
 </style>
 <rect class="bg" width="960" height="580" rx="12"/>
 <rect class="shell" x="18" y="18" width="924" height="544" rx="12"/>
