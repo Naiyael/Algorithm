@@ -140,6 +140,7 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
     weekday_labels = [(1, "Mon"), (3, "Wed"), (5, "Fri")]
 
     rects = []
+    snake_targets: list[tuple[int, dt.date, float, float]] = []
     for week in range(weeks):
         for weekday in range(7):
             day = start + dt.timedelta(days=week * 7 + weekday)
@@ -148,6 +149,8 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
             count = accepted_by_day[day]
             x = heat_x + week * (cell + gap)
             y = heat_y + weekday * (cell + gap)
+            if count > 0:
+                snake_targets.append((count, day, x + cell / 2, y + cell / 2))
             rects.append(
                 f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" '
                 f'fill="{heat_color(count)}"><title>{day}: {count} accepted submissions</title></rect>'
@@ -174,6 +177,28 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
             f'stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'
             + "".join(point_dots)
         )
+
+    snake_overlay = ""
+    snake_targets.sort(key=lambda item: (item[0], item[1]))
+    if len(snake_targets) >= 2:
+        route = " ".join(
+            f"{'M' if index == 0 else 'L'} {x:.1f} {y:.1f}"
+            for index, (_, _, x, y) in enumerate(snake_targets)
+        )
+        duration = max(14, min(28, len(snake_targets) * 0.55))
+        snake_overlay = f"""
+<path d="{route}" class="snake-route"/>
+<path d="{route}" class="snake-track">
+  <animate attributeName="stroke-dashoffset" from="120" to="0" dur="{duration:.1f}s" repeatCount="indefinite"/>
+</path>
+<g class="snake-head">
+  <animateMotion dur="{duration:.1f}s" repeatCount="indefinite" rotate="auto" path="{route}"/>
+  <circle cx="0" cy="0" r="7" class="snake-face"/>
+  <circle cx="-2.4" cy="-2.2" r="1.2" class="snake-eye"/>
+  <circle cx="2.4" cy="-2.2" r="1.2" class="snake-eye"/>
+  <path d="M -3 2 Q 0 4 3 2" class="snake-smile"/>
+</g>
+"""
 
     cards = [
         ("Current rating", rating, True),
@@ -210,6 +235,11 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
   .grid {{ stroke: #d8dee4; stroke-width: 1; }}
   .badge-bg {{ fill: {accent}; opacity: 0.14; }}
   .badge-text {{ font: 700 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: {accent}; }}
+  .snake-route {{ fill: none; stroke: #1f883d; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.14; }}
+  .snake-track {{ fill: none; stroke: #1f883d; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 10 14; opacity: 0.28; }}
+  .snake-face {{ fill: #1f883d; stroke: #ffffff; stroke-width: 2; }}
+  .snake-eye {{ fill: #ffffff; }}
+  .snake-smile {{ fill: none; stroke: #ffffff; stroke-width: 1.2; stroke-linecap: round; }}
 </style>
 <rect class="bg" width="960" height="580" rx="12"/>
 <rect class="shell" x="18" y="18" width="924" height="544" rx="12"/>
@@ -232,6 +262,7 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
 {"".join(month_labels)}
 {"".join(weekday_text)}
 {"".join(rects)}
+{snake_overlay}
 <text x="716" y="398" class="muted small">Less</text>
 <rect x="754" y="388" width="11" height="11" rx="2" fill="#ebedf0"/>
 <rect x="772" y="388" width="11" height="11" rx="2" fill="#9be9a8"/>
