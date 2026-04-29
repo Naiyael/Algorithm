@@ -19,7 +19,7 @@
 <rect class="bg" width="960" height="580" rx="12"/>
 <rect class="shell" x="18" y="18" width="924" height="544" rx="12"/>
 <text x="36" y="58" class="title">Codeforces</text>
-<text x="36" y="82" class="subtitle">@qiushan233 · updated 2026-04-29 11:28</text>
+<text x="36" y="82" class="subtitle">@qiushan233 · updated 2026-04-29 11:33</text>
 <rect x="805" y="38" width="96" height="30" rx="15" class="badge-bg"/>
 <text x="828" y="58" class="badge-text">specialist</text>
 <rect x="36" y="96" width="132" height="74" rx="8" class="metric-card"/><text x="52" y="122" class="metric-label">Current rating</text><text x="52" y="153" class="metric-value rank">1403</text><rect x="184" y="96" width="132" height="74" rx="8" class="metric-card"/><text x="200" y="122" class="metric-label">Max rating</text><text x="200" y="153" class="metric-value">1403</text><rect x="332" y="96" width="132" height="74" rx="8" class="metric-card"/><text x="348" y="122" class="metric-label">Rank</text><text x="348" y="153" class="metric-value rank">specialist</text><rect x="480" y="96" width="132" height="74" rx="8" class="metric-card"/><text x="496" y="122" class="metric-label">Max rank</text><text x="496" y="153" class="metric-value">specialist</text><rect x="628" y="96" width="132" height="74" rx="8" class="metric-card"/><text x="644" y="122" class="metric-label">Solved</text><text x="644" y="153" class="metric-value">121</text><rect x="776" y="96" width="132" height="74" rx="8" class="metric-card"/><text x="792" y="122" class="metric-label">Active days</text><text x="792" y="153" class="metric-value">35</text>
