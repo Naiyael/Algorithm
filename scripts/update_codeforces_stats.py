@@ -79,6 +79,8 @@ def month_label_positions(start: dt.date, weeks: int) -> list[tuple[int, str]]:
         if day.month != current_month:
             current_month = day.month
             labels.append((week, day.strftime("%b")))
+    if len(labels) > 1 and labels[0][0] == 0 and labels[1][0] - labels[0][0] < 3:
+        labels = labels[1:]
     return labels
 
 
@@ -149,7 +151,7 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
             x = heat_x + week * (cell + gap)
             y = heat_y + weekday * (cell + gap)
             rects.append(
-                f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" '
+                f'<rect class="heat-cell" x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" '
                 f'fill="{heat_color(count)}"><title>{day}: {count} accepted submissions</title></rect>'
             )
 
@@ -210,6 +212,8 @@ def build_svg(user: dict[str, Any], submissions: list[dict[str, Any]], ratings: 
   .grid {{ stroke: #d8dee4; stroke-width: 1; }}
   .badge-bg {{ fill: {accent}; opacity: 0.14; }}
   .badge-text {{ font: 700 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill: {accent}; }}
+  .heat-cell {{ cursor: default; transition: stroke 0.12s ease, stroke-width 0.12s ease; }}
+  .heat-cell:hover {{ stroke: #0969da; stroke-width: 1.5; }}
 </style>
 <rect class="bg" width="960" height="580" rx="12"/>
 <rect class="shell" x="18" y="18" width="924" height="544" rx="12"/>
