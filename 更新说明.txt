@@ -1,0 +1,8 @@
+1.先打开PowerShell;
+2.进入仓库目录   cd D:\github\Algorithm;
+3.运行   python scripts\update_codeforces_stats.py
+4.依次执行   cd D:\github\Algorithm
+git add assets/codeforces-stats.svg
+git commit -m "Update Codeforces stats"
+git push
+
