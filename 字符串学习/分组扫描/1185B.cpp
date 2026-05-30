@@ -2,7 +2,6 @@
 using namespace std;
 
 int main() {
-
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
@@ -10,54 +9,46 @@ int main() {
     cin >> n;
 
     while (n--) {
-        string s,t;
+        string s, t;
         cin >> s >> t;
 
-        int len1 = (int)s.size();
-        vector<pair<int,int>> cnt1;
-        for (int i = 0;i < len1;i++) {
-            int l = i;
-            int r = i;
-            while (r + 1 < len1 && s[r] == s[r + 1]) {
-                r++;
-            }
-            i = r;
-            cnt1.push_back(make_pair(l,r));
-        }
+        int len1 = s.size();
+        int len2 = t.size();
 
-        int len2 = (int)t.size();
-        vector<pair<int,int>> cnt2;
-        for (int i = 0;i < len2;i++) {
-            int l = i;
-            int r = i;
-            while (r + 1 < len2 && t[r] == t[r + 1]) {
-                r++;
-            }
-            i = r;
-            cnt2.push_back(make_pair(l,r));
-        }
+        int i = 0,j = 0;
+        bool flag = true;
 
-        bool flag = false;
-        if (cnt1.size() != cnt2.size()) {
-            cout << "NO" << endl;
-            continue;
-        }
-
-        int nn = (int)cnt1.size();
-        for (int i = 0;i < nn;i++) {
-            int lens = cnt1[i].second - cnt1[i].first + 1;
-            int lent = cnt2[i].second - cnt2[i].first + 1;
-            if (lens > lent) {
-                flag = true;
+        while (i < len1 && j < len2) {
+            if (s[i] != t[j]) {
+                flag = false;
                 break;
             }
-            if (s[cnt1[i].first] != t[cnt2[i].first]) {
-                flag = true;
+
+            char cur = s[i];
+            int count1 = 0;
+            int count2 = 0;
+
+            while (i < len1 && s[i] == cur) {
+                count1++;
+                i++;
+            }
+
+            while (j < len2 && t[j] == cur) {
+                count2++;
+                j++;
+            }
+
+            if (count2 < count1) {
+                flag = false;
                 break;
             }
         }
 
-        if (!flag) {
+        if (i != len1 || j != len2) {
+            flag = false;
+        }
+
+        if (flag) {
             cout << "YES" << endl;
         }
         else {

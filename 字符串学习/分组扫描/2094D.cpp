@@ -2,45 +2,58 @@
 using namespace std;
 
 int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
     int t;
     cin >> t;
 
     while (t--) {
         string p,s;
         cin >> p >> s;
-        int len1 = (int)p.size();
-        int len2 = (int)s.size();
 
-        vector<pair<int,int>> cnt1;
-        for (int i = 0;i < len1;i++) {
-            int l = i;
-            int r = i;
-            while (r + 1 < len1 && p[r] == p[r + 1]) {
-                r++;
+        int n = p.size();
+        int m = s.size();
+
+        int i = 0,j = 0;
+        bool flag = true;
+
+        while (i < n && j < m) {
+            if (p[i] != s[j]) {
+                flag = false;
+                break;
             }
-            cnt1.push_back(make_pair(l,r));
-            i = r;
+
+            char cur = p[i];
+            int count1 = 0;
+            int count2 = 0;
+
+            while (i < n && p[i] == cur) {
+                count1++;
+                i++;
+            }
+
+            while (j < m && s[j] == cur) {
+                count2++;
+                j++;
+            }
+
+            if (count2 < count1 || count2 > count1 * 2) {
+                flag = false;
+                break;
+            }
         }
 
-        vector<pair<int,int>> cnt2;
-        for (int i = 0;i < len2;i++) {
-            int l = i;
-            int r = i;
-            while (r + 1 < len2 && s[r] == s[r + 1]) {
-                r++;
-            }
-            cnt2.push_back(make_pair(l,r));
-            i = r;
+        if (i != n || j != m) {
+            flag = false;
         }
 
-        int lenp = (int)cnt1.size();
-        int lens = (int)cnt2.size();
-        if (lenp != lens) {
+        if (flag) {
+            cout << "YES" << endl;
+        }
+        else {
             cout << "NO" << endl;
-            continue;
         }
-
-        for ()
     }
     return 0;
 }
